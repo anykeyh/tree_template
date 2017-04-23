@@ -52,7 +52,7 @@ class TreeTemplate::Tagger
           name = "{{call.name.id}}"
 
           if INLINE_TAGS.includes?(name)
-            raise BadArgument.new("You're trying to put a block on a auto-closing markup")
+            raise ArgumentError.new("You're trying to put a block on a auto-closing markup")
           else
             tag(name, **params, &block)
           end

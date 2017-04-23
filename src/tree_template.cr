@@ -5,6 +5,7 @@ class TreeTemplate
   alias AllowedKey = StringOrSymbol
   alias AllowedValue = Bool |
                        Int64 |
+                       Int32 |
                        Float64 |
                        String |
                        Array(String) |
