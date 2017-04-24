@@ -1,8 +1,7 @@
-abstract class TreeTemplate::Renderer
-  getter level : Int32 = 0
+require "io"
 
-  def initialize
-  end
+abstract class TreeTemplate::Formatter
+  getter level : Int32 = 0
 
   def sub_level(&block) : self
     @level += 1

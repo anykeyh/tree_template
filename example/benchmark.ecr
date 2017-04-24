@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+
+<html>
+  <head>
+    <title>Simple Benchmark</title>
+  </head>
+  <body>
+    <h1><%= header %></h1>
+    <% if item.empty? %>
+      <p>The list is empty.</p>
+    <% else %>
+      <ul>
+      <% item.each do |i| %>
+        <% if i[:current] %>
+          <li><strong><%= i[:name] %></strong></li>
+        <% else %>
+          <li><a href="<%= i[:url] %>"><%= i[:name] %></a></li>
+        <% end %>
+      <% end %>
+      </ul>
+    <% end %>
+  </body>
+</html>

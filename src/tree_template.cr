@@ -1,5 +1,15 @@
 require "html"
 
+module OfAncestor(T)
+  def self.new(subclass : X, *params, **tuple) forall X
+    {% if X <= T.class %}
+      subclass.new(*params, **tuple)
+    {% else %}
+      {% raise "#{X} should inherit from #{T.class}" %}
+    {% end %}
+  end
+end
+
 class TreeTemplate
   alias StringOrSymbol = String | Symbol
   alias AllowedKey = StringOrSymbol
@@ -13,41 +23,54 @@ class TreeTemplate
                        Array(StringOrSymbol) |
                        Hash(AllowedKey, AllowedValue)
 
-  DIRECTIVES = {
-    html5:              "<!DOCTYPE html>",
-    html4_strict:       %(<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">),
-    html4_transitional: %(<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">),
-    html4_frameset:     %(<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">),
-    xhtml_strict:       %(<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">),
-    xhtml_transitional: %(<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">),
-    xhtml_frameset:     %(<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">),
-  }
+  property formatter : Formatter
+  getter template_block : Tagger -> Void
 
-  @tagger = Tagger.new
-  property renderer : Renderer
-  class_property default_renderer : Renderer = PrettyRenderer.new
+  @tagger : Tagger?
+  @is_built = false
 
-  def initialize(@root = "html", @directive : Symbol | String = "", @renderer : Renderer = TreeTemplate.default_renderer, &block : Tagger -> Void)
-    @block = block
+  def is_built?
+    @is_built
+  end
+
+  def initialize(formatter : X = PrettyFormatter, &template_block : Tagger -> Void) forall X
+    @formatter = OfAncestor(Formatter).new(formatter)
+    @template_block = template_block
+  end
+
+  # :nodoc:
+  def draw(scope : Symbol = :_default, page : TreeTemplate? = nil)
+    tagger = @tagger
+
+    raise "Draw should be called during render process" if tagger.nil?
+
+    @formatter.clear
+
+    if tagger.root_nodes[scope]
+      tagger.root_nodes[scope].each(&.render(@formatter, page: page))
+    end
+
+    @formatter.to_s
+  end
+
+  def build
+    unless is_built?
+      tagger = Tagger.new
+      @tagger = tagger
+      @template_block.call(tagger)
+      @is_built = true
+    end
   end
 
   def render : String
-    directive = @directive
+    build
+    draw
+  end
 
-    @renderer.clear
-
-    root_node = @tagger.tag(@root, &@block)
-
-    if directive.is_a?(Symbol)
-      directive = DIRECTIVES.fetch(directive) {
-        raise ArgumentError.new("Directive not known : #{directive}")
-      }
-    elsif directive.is_a?(String)
-      directive
-    end
-
-    root_node.render(@renderer)
-    directive + @renderer.to_s
+  def render(page : TreeTemplate) : String
+    build
+    page.build
+    draw(page: page)
   end
 
   @[AlwaysInline]
@@ -55,14 +78,13 @@ class TreeTemplate
     HTML.escape(x)
   end
 
-  def self.render_attributes(attributes : Hash, prefix = "") : String
+  def self.render_attributes(attributes : Hash, prefix : String? = nil) : String
     if attributes.size == 0
       ""
     else
-      (prefix.blank? ? " " : "") + attributes.map do |(key, value)|
+      (prefix ? " " : "") + attributes.map do |(key, value)|
         key_str = key.to_s
-
-        full_key = html_escape(prefix + key_str)
+        full_key = prefix ? html_escape(prefix + key_str) : html_escape(key_str)
 
         case value
         when Bool
@@ -83,12 +105,8 @@ end
 
 require "./tree_template/tagger"
 
-require "./tree_template/renderer"
-require "./tree_template/compact_renderer"
-require "./tree_template/pretty_renderer"
+require "./tree_template/formatter"
+require "./tree_template/formatter/*"
 
 require "./tree_template/node"
-require "./tree_template/comment_node"
-require "./tree_template/inline_tag_node"
-require "./tree_template/tag_node"
-require "./tree_template/text_node"
+require "./tree_template/node/*"

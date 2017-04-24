@@ -1,5 +1,5 @@
 abstract class TreeTemplate::Node
-  abstract def render(renderer : TreeTemplate::Renderer) : Void
+  abstract def render(renderer : TreeTemplate::Formatter, page : TreeTemplate? = nil) : Void
 
   # Just a helper method for making hash from Named Tuple.
   def make_hash(**tuple) : Hash(AllowedKey, AllowedValue)

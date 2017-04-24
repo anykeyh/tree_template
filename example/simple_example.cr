@@ -1,7 +1,8 @@
 require "../src/tree_template"
 
 # Fast and Simple Template System
-template = TreeTemplate.new(directive: :html5) do |t|
+template = TreeTemplate.new do |t|
+  t.doctype :html5
   t.html("class": "xxx", h: "yyy", w: 12, data: {on: {click: "dosomething", change: "wtf"}}) do
     t.body do
       10.times do

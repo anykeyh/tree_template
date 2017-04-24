@@ -3,8 +3,6 @@
 Just a HTML templating system for Crystal, which is not using any templating language
 but Crystal itself instead.
 
-Meaning it's blazing fast, and very easy to use.
-
 This is a revamp of [html_builder](https://github.com/crystal-lang/html_builder)
 built-in `crystal` core lib itself.
 I thought it was a good idea but the version in the framework is still very limited

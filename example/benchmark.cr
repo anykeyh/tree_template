@@ -1,44 +1,64 @@
 require "benchmark"
+require "ecr"
 require "../src/tree_template"
 
-users = [
-  {name: "Yacine", id: 1},
-  {name: "Victor", id: 2},
-  {name: "Roger", id: 3},
-  {name: "Marlo", id: 4},
-  {name: "Luis", id: 5},
-]
+item = [{name: "red", current: true, url: "#red"},
+        {name: "green", current: false, url: "#green"},
+        {name: "blue", current: false, url: "#blue"}]
 
-def render_user(t, user)
-  t.div "class": ["user", "block"], "data": {id: user[:id]} do
-    t.div(user[:name])
-  end
-end
+header = "colors"
 
-def render_nav(t)
-  t.nav rel: "main-nav", class: "navigation", id: "nav" do
-    t.ul id: "nav-menu" do
-      t.li(class: "nav-item") { t.a("Home", href: "#") }
-      t.li(class: "nav-item") { t.a("Manage users", href: "#") }
-      t.li(class: "nav-item") { t.a("Login", href: "#") }
-      t.li(class: "nav-item") { t.a("Logout", href: "#") }
-    end
-  end
-end
-
-my_template = TreeTemplate.new(directive: :html5) do |t|
+template_code : TreeTemplate::Tagger -> Void = ->(t : TreeTemplate::Tagger) {
+  t.doctype(:html5)
   t.html do
-    render_nav(t)
+    t.head do
+      t.title "Simple Benchmark"
+    end
     t.body do
-      users.each do |user|
-        render_user(t, user)
+      t.h1 header
+      unless item.empty?
+        t.ul do
+          item.each do |i|
+            if i[:current]
+              t.li do
+                t.strong i[:name]
+              end
+            else
+              t.li do
+                t.a i[:name], href: i[:url]
+              end
+            end
+          end
+        end
+      else
+        t.p "The list is empty."
       end
     end
   end
+  nil
+}
+
+class TemplateECR
+  def item
+    @item
+  end
+
+  def header
+    @header
+  end
+
+  def initialize(@header : String, @item : Array(NamedTuple(name: String, current: Bool, url: String))); end
+
+  ECR.def_to_s "example/benchmark.ecr"
 end
 
 Benchmark.ips do |x|
-  x.report("render template") do
+  x.report("render template (html-template)") do
+    my_template = TreeTemplate.new(&template_code)
     my_template.render
+  end
+
+  x.report("render template (ecr)") do
+    TemplateECR.new(header, item).to_s
   end
 end
