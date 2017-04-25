@@ -12,10 +12,10 @@ class TreeTemplate::DoctypeNode < TreeTemplate::Node
   def initialize(@text : String); end
 
   def initialize(from : Symbol)
-    @text = DOCTYPE.fetch(from) { raise "Doctype not found: #{from}" }
+    @text = DOCTYPE.fetch(from) { raise "Doctype not found: `#{from}`" }
   end
 
-  def render(renderer : TreeTemplate::Formatter, page : TreeTemplate? = nil)
-    renderer.concat("<!DOCTYPE #{@text}>")
+  def render(formatter : TreeTemplate::Formatter, page : TreeTemplate? = nil)
+    formatter << "<!DOCTYPE " << @text << '>'
   end
 end

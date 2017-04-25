@@ -33,7 +33,7 @@ class TreeTemplate
     @is_built
   end
 
-  def initialize(formatter : X = PrettyFormatter, &template_block : Tagger -> Void) forall X
+  def initialize(formatter : X = CompactFormatter, &template_block : Tagger -> Void) forall X
     @formatter = OfAncestor(Formatter).new(formatter)
     @template_block = template_block
   end
@@ -82,7 +82,7 @@ class TreeTemplate
     if attributes.size == 0
       ""
     else
-      (prefix ? " " : "") + attributes.map do |(key, value)|
+      (prefix ? "" : " ") + attributes.map do |(key, value)|
         key_str = key.to_s
         full_key = prefix ? html_escape(prefix + key_str) : html_escape(key_str)
 

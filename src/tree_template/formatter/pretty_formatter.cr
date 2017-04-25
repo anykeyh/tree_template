@@ -1,5 +1,5 @@
 class TreeTemplate::PrettyFormatter < TreeTemplate::Formatter
-  @buffer = IO::Memory.new(8096)
+  @buffer = IO::Memory.new
 
   def clear
     @buffer.clear
@@ -7,6 +7,10 @@ class TreeTemplate::PrettyFormatter < TreeTemplate::Formatter
 
   def to_s
     @buffer.to_s
+  end
+
+  def <<(x)
+    @buffer << x
   end
 
   def concat(s : String)

@@ -19,13 +19,11 @@ class TreeTemplate::TagNode < TreeTemplate::Node
     @children << any
   end
 
-  def render(renderer : TreeTemplate::Formatter, page : TreeTemplate? = nil)
-    renderer.concat "<#{@__tag_name}#{TreeTemplate.render_attributes(@attributes)}>"
+  def render(formatter : TreeTemplate::Formatter, page : TreeTemplate? = nil)
+    formatter << '<' << @__tag_name << TreeTemplate.render_attributes(@attributes) << '>'
 
-    renderer.sub_level {
-      @children.each { |c| c.render(renderer, page) }
-    }
+    @children.each { |c| c.render(formatter, page) }
 
-    renderer.concat "</#{@__tag_name}>"
+    formatter << "</" << @__tag_name << '>'
   end
 end

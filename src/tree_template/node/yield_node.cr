@@ -3,7 +3,7 @@ class TreeTemplate::YieldNode < TreeTemplate::Node
 
   def render(formatter : TreeTemplate::Formatter, page : TreeTemplate? = nil)
     if page
-      formatter.concat(page.draw(@for))
+      formatter << page.draw(@for)
     end
   end
 end

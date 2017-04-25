@@ -5,7 +5,7 @@ class TreeTemplate::InlineTagNode < TreeTemplate::Node
     @attributes = make_hash(**attributes)
   end
 
-  def render(renderer : TreeTemplate::Formatter, page : TreeTemplate? = nil)
-    renderer.concat("<#{@__tag_name}#{TreeTemplate.render_attributes(@attributes)} >")
+  def render(formatter : TreeTemplate::Formatter, page : TreeTemplate? = nil)
+    formatter << '<' << @__tag_name << TreeTemplate.render_attributes(@attributes) << " >"
   end
 end

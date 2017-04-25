@@ -9,7 +9,7 @@ item = [{name: "red", current: true, url: "#red"},
 header = "colors"
 
 template_code : TreeTemplate::Tagger -> Void = ->(t : TreeTemplate::Tagger) {
-  t.doctype(:html5)
+  t.doctype "html5"
   t.html do
     t.head do
       t.title "Simple Benchmark"
@@ -54,8 +54,7 @@ end
 
 Benchmark.ips do |x|
   x.report("render template (html-template)") do
-    my_template = TreeTemplate.new(&template_code)
-    my_template.render
+    TreeTemplate.new(&template_code).render
   end
 
   x.report("render template (ecr)") do

@@ -73,7 +73,7 @@ class TreeTemplate::Tagger
          meta param source track wbr) %}
       {% if call.block %}
         def {{call.name}}(**params, &block : Tagger -> Void)
-          {% if inline_tags.includes?(call.name) %}
+          {% if inline_tags.includes?("#{call.name}") %}
             {% raise ArgumentError.new("You're trying to put a block on a auto-closing markup `#{call.name}`") %}
           {% else %}
             tag("{{call.name.id}}", **params, &block)
@@ -81,7 +81,7 @@ class TreeTemplate::Tagger
         end
       {% else %}
         def {{call.name}}(__content : String = "", **params)
-          {% if inline_tags.includes?(call.name) %}
+          {% if inline_tags.includes?("#{call.name}") %}
             inline_tag("{{call.name.id}}", **params)
           {% else %}
             tag("{{call.name.id}}", __content, **params)

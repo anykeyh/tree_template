@@ -1,7 +1,7 @@
 class TreeTemplate::CompactFormatter < TreeTemplate::Formatter
-  class_property initial_buffer_size = 8096
+  # class_property initial_buffer_size = 32
 
-  @buffer = IO::Memory.new(TreeTemplate::CompactFormatter.initial_buffer_size)
+  @buffer = IO::Memory.new
 
   def clear
     @buffer.clear
@@ -9,6 +9,10 @@ class TreeTemplate::CompactFormatter < TreeTemplate::Formatter
 
   def to_s
     @buffer.to_s
+  end
+
+  def <<(x)
+    @buffer << x
   end
 
   def concat(s : String)
