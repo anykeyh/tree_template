@@ -38,6 +38,10 @@ class TreeTemplate
     @template_block = template_block
   end
 
+  def has_content_for?(scope : Symbol)
+    @tagger.not_nil!.root_nodes[scope]?
+  end
+
   # :nodoc:
   def draw(scope : Symbol = :_default, page : TreeTemplate? = nil)
     tagger = @tagger
@@ -46,7 +50,7 @@ class TreeTemplate
 
     @formatter.clear
 
-    if tagger.root_nodes[scope]
+    if tagger.root_nodes[scope]?
       tagger.root_nodes[scope].each(&.render(@formatter, page: page))
     end
 
