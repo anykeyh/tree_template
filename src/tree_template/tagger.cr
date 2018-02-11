@@ -49,6 +49,10 @@ class TreeTemplate::Tagger
     self << TreeTemplate::TextNode.new(__content)
   end
 
+  def unsafe(__content : String)
+    self << TreeTemplate::UnsafeNode.new(__content)
+  end
+
   def raw(__content : String)
     self << TreeTemplate::RawNode.new(__content)
   end
