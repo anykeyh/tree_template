@@ -1,6 +1,4 @@
 class TreeTemplate::Tagger
-  include TreeTemplate::Components
-
   @context = [] of TreeTemplate::TagNode
   getter root_nodes = {} of Symbol => Array(TreeTemplate::Node)
 
@@ -70,27 +68,27 @@ class TreeTemplate::Tagger
     self << TreeTemplate::CommentNode.new(__content)
   end
 
-  macro method_missing(call)
-    {% inline_tags = %w(area base br col command embed hr img input keygen link
-         meta param source track wbr) %}
-      {% if call.block %}
-        def {{call.name}}(**params, &block : Tagger -> Void)
-          {% if inline_tags.includes?("#{call.name}") %}
-            {% raise "You're trying to put a block on a auto-closing markup `#{call.name}`" %}
-          {% else %}
-            tag("{{call.name.id}}", **params, &block)
-          {% end %}
-        end
-      {% else %}
-        {% if inline_tags.includes?("#{call.name}") %}
-          def {{call.name}}(**params)
-            inline_tag("{{call.name.id}}", **params)
-          end
-        {% else %}
-          def {{call.name}}(__content : String = "", **params)
-            tag("{{call.name.id}}", __content, **params)
-          end
-          {% end %}
-      {% end %}
-    end
+  # Generate the methods for each tags
+  {% for t in %w(a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd keygen label legend li link main map mark math menu menuitem meta meter nav noscript object ol optgroup option output p param picture pre progress q rb rp rt rtc ruby s samp script section select slot small source span strong style sub summary sup svg table tbody td template textarea tfoot th thead time title tr track u ul var video wbr) %}
+    {%
+      inline_tags = %w(area base br col command embed hr img input keygen link meta param source track wbr)
+    %}
+
+    {% if inline_tags.includes?(t) %}
+      def {{t.id}}(**params)
+        inline_tag({{t}}, **params)
+      end
+    {% else %}
+      def {{t.id}}(__content : String = "", **params)
+        tag({{t}}, __content, **params)
+      end
+
+      def {{t.id}}(**params, &block : Tagger -> Void)
+        tag({{t}}, **params, &block)
+      end
+    {% end %}
+  {% end %}
+
+  # Include the custom components
+  include TreeTemplate::Components
 end
