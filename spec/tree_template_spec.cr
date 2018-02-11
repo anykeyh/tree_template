@@ -56,7 +56,7 @@ end
 
 module TreeTemplate::Components
   def my_component(x : Int32)
-    div { text "This would be great !" }
+    div { text "This would be great #{x}!" }
   end
 end
 
@@ -65,7 +65,7 @@ describe TreeTemplate, "usage of components" do
     t.my_component(5)
   end
 
-  template.render.should eq("<div>This would be great !</div>")
+  template.render.should eq("<div>This would be great 5!</div>")
 end
 
 describe TreeTemplate, "usage with kilt" do
