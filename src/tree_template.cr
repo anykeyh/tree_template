@@ -67,7 +67,7 @@ class TreeTemplate
     draw
   end
 
-  def render(page : TreeTemplate) : String
+  def render_as_layout(page : TreeTemplate) : String
     build
     page.build
     draw(page: page)

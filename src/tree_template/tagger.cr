@@ -21,13 +21,13 @@ class TreeTemplate::Tagger
     end
   end
 
-  def inline_tag(name, **opts)
-    inline_tag = TreeTemplate::InlineTagNode.new(name, **opts)
+  def inline_tag(__tag_name : String, **opts)
+    inline_tag = TreeTemplate::InlineTagNode.new(__tag_name, **opts)
     self << inline_tag
   end
 
-  def tag(name : String, __content : String = "", **opts)
-    context_tag = TreeTemplate::TagNode.new(name, **opts)
+  def tag(__tag_name : String, __content : String = "", **opts)
+    context_tag = TreeTemplate::TagNode.new(__tag_name, **opts)
     context_tag.add_children(TreeTemplate::TextNode.new(__content))
 
     self << context_tag
@@ -76,19 +76,21 @@ class TreeTemplate::Tagger
       {% if call.block %}
         def {{call.name}}(**params, &block : Tagger -> Void)
           {% if inline_tags.includes?("#{call.name}") %}
-            {% raise ArgumentError.new("You're trying to put a block on a auto-closing markup `#{call.name}`") %}
+            {% raise "You're trying to put a block on a auto-closing markup `#{call.name}`" %}
           {% else %}
             tag("{{call.name.id}}", **params, &block)
           {% end %}
         end
       {% else %}
-        def {{call.name}}(__content : String = "", **params)
-          {% if inline_tags.includes?("#{call.name}") %}
+        {% if inline_tags.includes?("#{call.name}") %}
+          def {{call.name}}(**params)
             inline_tag("{{call.name.id}}", **params)
-          {% else %}
+          end
+        {% else %}
+          def {{call.name}}(__content : String = "", **params)
             tag("{{call.name.id}}", __content, **params)
+          end
           {% end %}
-        end
       {% end %}
     end
 end
