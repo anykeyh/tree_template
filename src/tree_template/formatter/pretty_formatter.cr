@@ -10,12 +10,24 @@ class TreeTemplate::PrettyFormatter < TreeTemplate::Formatter
   end
 
   def <<(x)
-    @buffer << x
+    concat(x.to_s)
+  end
+
+  # def concat(c : Char)
+  #   if c == '\n'
+  #     front_space = "  " * @level
+  #     @buffer << "\n#{front_space}"
+  #   else
+  #     c
+  #   end
+  # end
+
+  def nl
+    @buffer << "\n"
   end
 
   def concat(s : String)
-    @buffer << ("  " * @level)
-    @buffer << (("  " * @level) + s.gsub(/^[ \t]+/, ""))
-    @buffer << "\n"
+    front_space = "  " * @level
+    @buffer << (front_space + s.gsub(/\n/, "\n#{front_space}"))
   end
 end

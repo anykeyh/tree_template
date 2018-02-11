@@ -19,15 +19,7 @@ template_code : TreeTemplate::Tagger -> Void = ->(t : TreeTemplate::Tagger) {
       unless item.empty?
         t.ul do
           item.each do |i|
-            if i[:current]
-              t.li do
-                t.strong i[:name]
-              end
-            else
-              t.li do
-                t.a i[:name], href: i[:url]
-              end
-            end
+            t.li { i[:current] ? t.strong i[:name] : t.a i[:name], href: i[:url] }
           end
         end
       else

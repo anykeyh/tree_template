@@ -20,10 +20,17 @@ class TreeTemplate::TagNode < TreeTemplate::Node
   end
 
   def render(formatter : TreeTemplate::Formatter, page : TreeTemplate? = nil)
-    formatter << '<' << @__tag_name << TreeTemplate.render_attributes(@attributes) << '>'
+    formatter << "<" << @__tag_name << TreeTemplate.render_attributes(@attributes) << ">"
+    formatter.nl
 
-    @children.each { |c| c.render(formatter, page) }
+    formatter.sub_level do
+      @children.each_with_index { |c, idx|
+        formatter.nl unless idx == 0
+        c.render(formatter, page)
+      }
+    end
 
+    formatter.nl
     formatter << "</" << @__tag_name << '>'
   end
 end

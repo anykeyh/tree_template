@@ -65,6 +65,10 @@ Then in your layout:
   end
 ```
 
+### Layouting
+
+Use the `yield` functionnality to layout
+
 ### Text rendering
 
 Text rendering can use `t.xxx(text, **attributes)` or `t.xxx(**attributes){ t.text "xxx" } `

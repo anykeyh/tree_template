@@ -13,7 +13,9 @@ abstract class TreeTemplate::Formatter
 
   abstract def <<(x)
 
-  abstract def clear : Void
+  abstract def nl
+
+  abstract def clear
 
   abstract def concat(s : String)
 end

@@ -2,3 +2,7 @@ name: tree_template
 version: 0.1.0
 
 license: MIT
+
+development_dependencies:
+  kilt:
+    git: https://github.com/jeromegn/kilt.git

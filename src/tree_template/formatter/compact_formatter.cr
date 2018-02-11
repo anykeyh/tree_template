@@ -15,6 +15,9 @@ class TreeTemplate::CompactFormatter < TreeTemplate::Formatter
     @buffer << x
   end
 
+  def nl
+  end
+
   def concat(s : String)
     @buffer << s
   end

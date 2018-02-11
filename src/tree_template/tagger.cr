@@ -1,4 +1,6 @@
 class TreeTemplate::Tagger
+  include TreeTemplate::Components
+
   @context = [] of TreeTemplate::TagNode
   getter root_nodes = {} of Symbol => Array(TreeTemplate::Node)
 

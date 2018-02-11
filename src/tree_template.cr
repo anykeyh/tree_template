@@ -103,6 +103,7 @@ class TreeTemplate
   end
 end
 
+require "./tree_template/components"
 require "./tree_template/tagger"
 
 require "./tree_template/formatter"
