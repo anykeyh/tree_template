@@ -1,3 +1,5 @@
+require "./node"
+
 class TreeTemplate::DoctypeNode < TreeTemplate::Node
   DOCTYPE = {
     html5:              "html",

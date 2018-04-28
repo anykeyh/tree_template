@@ -7,4 +7,7 @@ shard.lock
 lib
 tmp
 
-spec/.run_auth_specs
+/coverage
+/bin/crystal-coverage
+
+/spec/.run_auth_specs
